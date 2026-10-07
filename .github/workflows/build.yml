@@ -1,0 +1,334 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  build-systemcore:
+    name: "Build for Systemcore"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v7
+      - name: "Setup Java"
+        uses: actions/setup-java@v6
+        with:
+          distribution: "temurin"
+          java-version: "25"
+      - name: "Install Systemcore toolchain"
+        run: ./gradlew :akit:installSystemCoreToolchain
+      - name: "Check formatting"
+        run: ./gradlew spotlessCheck
+      - name: "Build and test"
+        run: ./gradlew :akit:build -Ponlylinuxsystemcore
+      - name: "Development: Publish local"
+        if: github.event_name != 'release'
+        run: ./gradlew :akit:publishAllPublicationsToMavenRepository -Ponlylinuxsystemcore
+      - name: "Release: Get version number"
+        id: get_version
+        if: github.event_name == 'release'
+        uses: battila7/get-version-action@v2
+      - name: "Release: Get release info"
+        id: get_release_info
+        if: github.event_name == 'release'
+        uses: bruceadams/get-release@v1.2.3
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: "Release: Publish remote"
+        if: github.event_name == 'release'
+        run: ./gradlew :akit:publish -Ponlylinuxsystemcore "-PpublishingVersion=${{ steps.get_version.outputs.version-without-v }}"
+        env:
+          ARTIFACTORY_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
+          ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
+      - name: "Release: Upload vendordep"
+        if: github.event_name == 'release'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.get_release_info.outputs.upload_url }}
+          asset_path: akit/build/vendordep/AdvantageKit.json
+          asset_name: AdvantageKit.json
+          asset_content_type: application/json
+      - name: "Upload local repo"
+        uses: actions/upload-artifact@v7
+        with:
+          name: maven_linuxsystemcore
+          path: akit/build/repos/releases
+      - name: "Generate template projects"
+        working-directory: template_projects
+        run: |
+          chmod +x generate_projects.sh
+          ./generate_projects.sh
+      - name: "Upload template projects"
+        uses: actions/upload-artifact@v7
+        with:
+          name: template_projects
+          path: template_projects/generated
+      - name: "Release: Upload template project (kitbot_2026)"
+        if: github.event_name == 'release'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.get_release_info.outputs.upload_url }}
+          asset_path: template_projects/generated/kitbot_2026.zip
+          asset_name: AdvantageKit_KitBot2026Template.zip
+          asset_content_type: application/zip
+      - name: "Release: Upload template project (diff_drive)"
+        if: github.event_name == 'release'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.get_release_info.outputs.upload_url }}
+          asset_path: template_projects/generated/diff_drive.zip
+          asset_name: AdvantageKit_DiffDriveTemplate.zip
+          asset_content_type: application/zip
+      - name: "Release: Upload template project (spark_swerve)"
+        if: github.event_name == 'release'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.get_release_info.outputs.upload_url }}
+          asset_path: template_projects/generated/spark_swerve.zip
+          asset_name: AdvantageKit_SparkSwerveTemplate.zip
+          asset_content_type: application/zip
+      - name: "Release: Upload template project (talonfx_swerve)"
+        if: github.event_name == 'release'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.get_release_info.outputs.upload_url }}
+          asset_path: template_projects/generated/talonfx_swerve.zip
+          asset_name: AdvantageKit_TalonFXSwerveTemplate.zip
+          asset_content_type: application/zip
+      - name: "Release: Upload template project (vision)"
+        if: github.event_name == 'release'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.get_release_info.outputs.upload_url }}
+          asset_path: template_projects/generated/vision.zip
+          asset_name: AdvantageKit_VisionTemplate.zip
+          asset_content_type: application/zip
+      - name: "Release: Upload template project (skeleton)"
+        if: github.event_name == 'release'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.get_release_info.outputs.upload_url }}
+          asset_path: template_projects/generated/skeleton.zip
+          asset_name: AdvantageKit_SkeletonTemplate.zip
+          asset_content_type: application/zip
+
+  build-desktop:
+    strategy:
+      matrix:
+        include:
+          - name: "Linux (x64)"
+            runner-image: ubuntu-24.04
+            classifier: "linuxx86-64"
+            container: ""
+            extra-args: ""
+          - name: "Linux (arm64)"
+            runner-image: ubuntu-24.04
+            classifier: "linuxarm64"
+            container: wpilib/aarch64-cross-debian:trixie
+            extra-args: ""
+          - name: "macOS"
+            runner-image: macos-latest
+            classifier: "osxuniversal"
+            container: ""
+            extra-args: ""
+          - name: "Windows (x64)"
+            runner-image: windows-latest
+            classifier: "windowsx86-64"
+            container: ""
+            extra-args: ""
+          - name: "Windows (arm64)"
+            runner-image: windows-latest
+            classifier: "windowsarm64"
+            container: ""
+            extra-args: "-Pbuildwinarm64"
+    name: "Build for ${{ matrix.name }}"
+    runs-on: ${{ matrix.runner-image }}
+    container: ${{ matrix.container }}
+    env:
+      GRADLE_SIGN_ARGS: ""
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v7
+      - name: "Setup Java"
+        uses: actions/setup-java@v6
+        if: matrix.classifier != 'linuxarm64'
+        with:
+          distribution: "temurin"
+          java-version: "25"
+      - name: "Setup Python"
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: "Install Python dependencies"
+        run: python -m pip install requests
+      - name: "Load macOS certificate"
+        if: |
+          github.repository == 'Mechanical-Advantage/AdvantageKit' &&
+          github.event_name == 'release' &&
+          matrix.classifier == 'osxuniversal'
+        uses: apple-actions/import-codesign-certs@v7
+        with:
+          p12-file-base64: ${{ secrets.APPLE_DEVELOPER_ID }}
+          p12-password: ${{ secrets.APPLE_DEVELOPER_ID_PWD }}
+      - name: "Set macOS signing argument"
+        if: |
+          github.repository == 'Mechanical-Advantage/AdvantageKit' &&
+          github.event_name == 'release' &&
+          matrix.classifier == 'osxuniversal'
+        shell: bash
+        run: |
+          echo "GRADLE_SIGN_ARGS=-PdeveloperID" >> $GITHUB_ENV
+      - name: "Install Windows signing tool"
+        if: |
+          github.repository == 'Mechanical-Advantage/AdvantageKit' &&
+          github.event_name == 'release' &&
+          startsWith(matrix.classifier, 'windows')
+        run: dotnet tool install --global sign --prerelease
+      - name: "Load Windows signing credentials"
+        if: |
+          github.repository == 'Mechanical-Advantage/AdvantageKit' &&
+          github.event_name == 'release' &&
+          startsWith(matrix.classifier, 'windows')
+        shell: bash
+        run: |
+          echo "AZURE_TENANT_ID=${{ secrets.AZURE_SIGNING_TENANT_ID }}" >> $GITHUB_ENV
+          echo "AZURE_CLIENT_ID=${{ secrets.AZURE_SIGNING_CLIENT_ID }}" >> $GITHUB_ENV
+          echo "AZURE_CLIENT_SECRET=${{ secrets.AZURE_SIGNING_CLIENT_SECRET }}" >> $GITHUB_ENV
+          echo "AZURE_SIGNING_ENDPOINT=${{ vars.AZURE_SIGNING_ENDPOINT }}" >> $GITHUB_ENV
+          echo "AZURE_SIGNING_ACCOUNT_NAME=${{ vars.AZURE_SIGNING_ACCOUNT_NAME }}" >> $GITHUB_ENV
+          echo "AZURE_SIGNING_CERTIFICATE_PROFILE=${{ vars.AZURE_SIGNING_CERTIFICATE_PROFILE }}" >> $GITHUB_ENV
+          echo "GRADLE_SIGN_ARGS=-PazureSign" >> $GITHUB_ENV
+      - name: "Build and test"
+        run: ./gradlew :akit:build -Ponly${{ matrix.classifier }} -PskipJava=1 ${{ matrix.extra-args }} ${{ env.GRADLE_SIGN_ARGS }}
+      - name: "Development: Publish local"
+        if: github.event_name != 'release'
+        run: ./gradlew :akit:publishAllPublicationsToMavenRepository -Ponly${{ matrix.classifier }} -PskipJava=1 ${{ matrix.extra-args }} ${{ env.GRADLE_SIGN_ARGS }}
+      - name: "Release: Get version number"
+        id: get_version
+        if: github.event_name == 'release'
+        uses: battila7/get-version-action@v2
+      - name: "Release: Publish local"
+        if: github.event_name == 'release'
+        run: ./gradlew :akit:publishAllPublicationsToMavenRepository -Ponly${{ matrix.classifier }} -PskipJava=1 ${{ matrix.extra-args }} ${{ env.GRADLE_SIGN_ARGS }} "-PpublishingVersion=${{ steps.get_version.outputs.version-without-v }}"
+      - name: "Release: Publish zip"
+        if: github.event_name == 'release'
+        run: |
+          python publish_zip.py --url https://frcmaven.wpi.edu/artifactory/littletonrobotics-mvn-release --group_id org.littletonrobotics.akit --artifact_id akit-wpilibio --version ${{ steps.get_version.outputs.version-without-v }} --classifier ${{ matrix.classifier }} --file_path akit/build/outputs/_M__GROUP_org_littletonrobotics_akit_ID_akit-wpilibio_CLS-${{ matrix.classifier }}.zip --username ${{ secrets.ARTIFACTORY_USERNAME }} --password ${{ secrets.ARTIFACTORY_PASSWORD }}
+      - name: "Upload local repo"
+        uses: actions/upload-artifact@v7
+        with:
+          name: maven_${{ matrix.classifier }}
+          path: akit/build/repos/releases
+
+  combine:
+    name: "Combine Maven Offline"
+    runs-on: ubuntu-latest
+    needs: [build-systemcore, build-desktop]
+    steps:
+      - name: "Download Systemcore"
+        uses: actions/download-artifact@v8
+        with:
+          name: maven_linuxsystemcore
+          path: maven_linuxsystemcore
+      - name: "Download Linux (x64)"
+        uses: actions/download-artifact@v8
+        with:
+          name: maven_linuxx86-64
+          path: maven_linuxx86-64
+      - name: "Download Linux (arm64)"
+        uses: actions/download-artifact@v8
+        with:
+          name: maven_linuxarm64
+          path: maven_linuxarm64
+      - name: "Download macOS"
+        uses: actions/download-artifact@v8
+        with:
+          name: maven_osxuniversal
+          path: maven_osxuniversal
+      - name: "Download Windows (x64)"
+        uses: actions/download-artifact@v8
+        with:
+          name: maven_windowsx86-64
+          path: maven_windowsx86-64
+      - name: "Download Windows (arm64)"
+        uses: actions/download-artifact@v8
+        with:
+          name: maven_windowsarm64
+          path: maven_windowsarm64
+      - name: "Combine"
+        run: |
+          rsync -a maven_linuxsystemcore/* maven_offline
+          rsync -a maven_linuxx86-64/* maven_offline
+          rsync -a maven_linuxarm64/* maven_offline
+          rsync -a maven_osxuniversal/* maven_offline
+          rsync -a maven_windowsx86-64/* maven_offline
+          rsync -a maven_windowsarm64/* maven_offline
+          zip -r maven_offline.zip maven_offline
+      - name: "Upload artifact"
+        uses: actions/upload-artifact@v7
+        with:
+          name: maven
+          path: maven_offline
+      - name: "Release: Get release info"
+        id: get_release_info
+        if: github.event_name == 'release'
+        uses: bruceadams/get-release@v1.2.3
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: "Release: Upload artifact"
+        uses: actions/upload-release-asset@v1
+        if: github.event_name == 'release'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.get_release_info.outputs.upload_url }}
+          asset_path: maven_offline.zip
+          asset_name: maven_offline.zip
+          asset_content_type: application/zip
+
+  build-docs:
+    name: "Build Docs"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v7
+      - name: "Setup Java"
+        uses: actions/setup-java@v6
+        with:
+          distribution: "temurin"
+          java-version: "25"
+      - name: "Setup Node.js"
+        uses: actions/setup-node@v7
+        with:
+          node-version: "20.x"
+          cache: "npm"
+          cache-dependency-path: docs/package-lock.json
+      - name: "Install Node.js dependencies"
+        run: cd docs && npm ci
+      - name: "Build Javadoc"
+        run: ./gradlew :akit:javadoc
+      - name: "Build docs"
+        run: cd docs && npm run build
+      - name: "Upload artifact"
+        uses: actions/upload-artifact@v7
+        with:
+          name: docs
+          path: docs/build/
