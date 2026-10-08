@@ -9,21 +9,21 @@ import java.util.OptionalInt;
 public final class DriveConstants {
   private DriveConstants() {}
 
-  public static final double MAX_SPEED = 4.5; // TODO TUNE: real maximum linear and module speed
-  public static final double MAX_OMEGA = Math.PI; // TODO TUNE: real maximum angular speed
+  public static final double MAX_SPEED = 4.5; // TODO TUNE: real maximum linear/module speed, m/s
+  public static final double MAX_OMEGA = Math.PI; // TODO TUNE: real maximum angular speed, rad/s
   public static final double HEADING_KP = 4.0; // TODO TUNE: real heading kP
   public static final double HEADING_KI = 0.0; // TODO TUNE: real heading kI
   public static final double HEADING_KD = 0.0; // TODO TUNE: real heading kD
-  public static final double TRACK_WIDTH = 0.55; // TODO MEASURE: track width
-  public static final double WHEEL_BASE = 0.55; // TODO MEASURE: wheelbase
+  public static final double TRACK_WIDTH = 0.55; // TODO MEASURE: track width, m
+  public static final double WHEEL_BASE = 0.55; // TODO MEASURE: wheelbase, m
   public static final Translation2d[] MODULE_TRANSLATIONS = {
-    new Translation2d(WHEEL_BASE / 2, TRACK_WIDTH / 2), // TODO MEASURE: FL module position
-    new Translation2d(WHEEL_BASE / 2, -TRACK_WIDTH / 2), // TODO MEASURE: FR module position
-    new Translation2d(-WHEEL_BASE / 2, TRACK_WIDTH / 2), // TODO MEASURE: BL module position
-    new Translation2d(-WHEEL_BASE / 2, -TRACK_WIDTH / 2) // TODO MEASURE: BR module position
+    new Translation2d(WHEEL_BASE / 2, TRACK_WIDTH / 2), // TODO MEASURE: FL x/y position, m
+    new Translation2d(WHEEL_BASE / 2, -TRACK_WIDTH / 2), // TODO MEASURE: FR x/y position, m
+    new Translation2d(-WHEEL_BASE / 2, TRACK_WIDTH / 2), // TODO MEASURE: BL x/y position, m
+    new Translation2d(-WHEEL_BASE / 2, -TRACK_WIDTH / 2) // TODO MEASURE: BR x/y position, m
   };
 
-  // Fill these from verified robot measurements before enabling path following.
+  // TODO MEASURE: real robot properties in kg, kg·m², m, unitless, unitless, A, and count.
   public static final OptionalDouble ROBOT_MASS_KG = OptionalDouble.empty();
   public static final OptionalDouble ROBOT_MOI_KG_METERS_SQUARED = OptionalDouble.empty();
   public static final OptionalDouble WHEEL_RADIUS_METERS = OptionalDouble.empty();
@@ -74,7 +74,8 @@ public final class DriveConstants {
   // TODO HARDWARE: Pigeon CAN ID, mounting, and yaw sign.
   public static final Integer PIGEON_CAN_ID = null;
 
-  // TODO MEASURE: wheel circumference and both module reductions, expressed as encoder units.
+  // TODO MEASURE: conversion factors in m/motor rotation, m/s per motor RPM, rad/motor rotation,
+  // and rad/s per motor RPM.
   public static final double DRIVE_POSITION_METERS_PER_MOTOR_ROTATION = Double.NaN;
   public static final double DRIVE_VELOCITY_METERS_PER_SECOND_PER_RPM = Double.NaN;
   public static final double TURN_POSITION_RADIANS_PER_MOTOR_ROTATION = Double.NaN;

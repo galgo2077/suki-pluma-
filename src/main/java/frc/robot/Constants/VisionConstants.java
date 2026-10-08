@@ -19,7 +19,7 @@ public final class VisionConstants {
   public static final double MAX_SINGLE_TAG_AMBIGUITY =
       0.30; // TODO TUNE: single-tag ambiguity limit
   public static final double MAX_Z_ERROR_METERS = 0.75; // TODO TUNE: accepted Z error
-  // TODO MEASURE: configure measured robot-space Limelight transform in LimelightOS.
+  // TODO MEASURE: configure robot-to-camera translation in m and rotation in rad in LimelightOS.
   public static final double LINEAR_STD_DEV_BASELINE = 0.02; // TODO TUNE: base linear confidence
   public static final double ANGULAR_STD_DEV_BASELINE = 0.06; // TODO TUNE: base angular confidence
 }

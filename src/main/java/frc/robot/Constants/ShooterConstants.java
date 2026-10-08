@@ -2,7 +2,7 @@ package frc.robot.Constants;
 
 import edu.wpi.first.math.geometry.Translation2d;
 
-/** Shooter configuration. Automatic feeding stays disabled until commissioning is complete. */
+/** Shooter hardware and calibration configuration. */
 public final class ShooterConstants {
   private ShooterConstants() {}
 
@@ -16,7 +16,7 @@ public final class ShooterConstants {
   public static final Boolean KRAKEN_1_INVERTED = null;
   public static final Boolean KRAKEN_2_INVERTED = null;
   public static final Boolean FEEDER_INVERTED = null;
-  // TODO MEASURE: motor rotations per flywheel rotation.
+  // TODO MEASURE: motor rotations per flywheel rotation (unitless ratio).
   public static final double MOTOR_ROTATIONS_PER_FLYWHEEL_ROTATION = Double.NaN;
   // TODO CALIBRATE: acceptable flywheel RPM tolerance.
   public static final double RPM_TOLERANCE = Double.NaN;
@@ -28,7 +28,7 @@ public final class ShooterConstants {
   public static final Double KRAKEN_KV = null;
   // TODO CALIBRATE: NEO feeder output while automatic feeding is enabled.
   public static final double REAL_FEEDER_OUTPUT = Double.NaN;
-  // TODO MEASURE: shooter exit position relative to the robot center, in robot coordinates.
+  // TODO MEASURE: shooter-exit x/y position from robot center, m.
   public static final Translation2d SHOOTER_EXIT_FROM_ROBOT_CENTER_METERS = null;
 
   // SIMULATION ONLY: these values are not hardware calibration values.
