@@ -17,27 +17,16 @@ import edu.wpi.first.wpilibj.RobotBase;
 public final class SystemConstants {
   public static final Mode simMode = Mode.SIM;
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
-  public static final ControllerMode DRIVER_CONTROLLER_MODE = ControllerMode.XBOX;
-  public static final int DRIVER_PORT = 0;
-  public static final double DRIVER_DEADBAND = 0.20; // TODO TUNE: driver deadband
+  // TODO HARDWARE: verify USB assignments before competition.
+  public static final int JOYSTICK_PORT = 0;
+  public static final int XBOX_PORT = 1;
+  public static final double XBOX_TRIGGER_THRESHOLD = 0.5;
   public static final OdometryMode ODOMETRY_MODE = OdometryMode.ODOMETRY_LIMELIGHT;
-  public static final RoboRIOVersion ROBORIO_VERSION = RoboRIOVersion.RIO_2;
-
-  public enum ControllerMode {
-    XBOX,
-    GENERIC_JOYSTICK
-  }
 
   /** Deploy-time localization selection. Camera loss always falls back to wheel/gyro odometry. */
   public enum OdometryMode {
     ODOMETRY_ONLY,
     ODOMETRY_LIMELIGHT
-  }
-
-  /** Selects hardware-compatible optimizations. */
-  public enum RoboRIOVersion {
-    RIO_1,
-    RIO_2
   }
 
   public enum Mode {

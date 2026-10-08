@@ -7,7 +7,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.BuildConstants;
 import frc.robot.Constants.SystemConstants;
@@ -21,8 +20,6 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 public class Robot extends LoggedRobot {
   @SuppressWarnings("unused")
   private final RobotContainer container = new RobotContainer();
-
-  private Command autonomousCommand;
 
   public Robot() {
     // Record metadata
@@ -70,28 +67,4 @@ public class Robot extends LoggedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
   }
-
-  /** This function is run once each time the robot enters autonomous mode. */
-  @Override
-  public void autonomousInit() {
-    autonomousCommand = container.getAutonomousCommand();
-    if (autonomousCommand != null) CommandScheduler.getInstance().schedule(autonomousCommand);
-  }
-
-  /** This function is called periodically during autonomous. */
-  @Override
-  public void autonomousPeriodic() {}
-
-  /** This function is called once each time the robot enters teleoperated mode. */
-  @Override
-  public void teleopInit() {
-    if (autonomousCommand != null) {
-      CommandScheduler.getInstance().cancel(autonomousCommand);
-      autonomousCommand = null;
-    }
-  }
-
-  /** This function is called periodically during teleoperated mode. */
-  @Override
-  public void teleopPeriodic() {}
 }

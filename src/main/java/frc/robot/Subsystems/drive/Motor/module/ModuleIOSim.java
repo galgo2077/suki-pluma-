@@ -14,10 +14,4 @@ public class ModuleIOSim implements ModuleIO {
     in.connected = true;
     position += velocity * 0.02; // SIM ONLY: fixed simulation period
   }
-
-  @Override
-  public void setDesired(double speed, Rotation2d desired) {
-    velocity = speed;
-    angle = desired;
-  }
 }

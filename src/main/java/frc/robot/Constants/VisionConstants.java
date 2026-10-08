@@ -9,10 +9,6 @@ public final class VisionConstants {
 
   public static final String LIMELIGHT_HOSTNAME = "limelight";
 
-  /** Limelight's built-in MJPEG stream. It is available at port 5800 on the robot network. */
-  public static final String LIMELIGHT_STREAM_URL =
-      "http://" + LIMELIGHT_HOSTNAME + ".local:5800/stream.mjpg";
-
   public static final AprilTagFieldLayout APRILTAG_LAYOUT =
       AprilTagFields.k2026RebuiltWelded.loadAprilTagLayoutField();
 

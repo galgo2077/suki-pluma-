@@ -14,6 +14,4 @@ public interface ModuleIO {
   }
 
   default void updateInputs(ModuleIOInputs inputs) {}
-
-  default void setDesired(double metersPerSec, Rotation2d angle) {}
 }
