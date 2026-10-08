@@ -7,6 +7,10 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.BuildConstants;
+import frc.robot.Constants.SystemConstants;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -15,6 +19,11 @@ import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 public class Robot extends LoggedRobot {
+  @SuppressWarnings("unused")
+  private final RobotContainer container = new RobotContainer();
+
+  private Command autonomousCommand;
+
   public Robot() {
     // Record metadata
     Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
@@ -31,7 +40,7 @@ public class Robot extends LoggedRobot {
         });
 
     // Set up data receivers & replay source
-    switch (Constants.currentMode) {
+    switch (SystemConstants.currentMode) {
       case REAL:
         // Running on a real robot, log to a USB stick ("/U/logs")
         Logger.addDataReceiver(new WPILOGWriter());
@@ -58,11 +67,16 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically during all modes. */
   @Override
-  public void robotPeriodic() {}
+  public void robotPeriodic() {
+    CommandScheduler.getInstance().run();
+  }
 
   /** This function is run once each time the robot enters autonomous mode. */
   @Override
-  public void autonomousInit() {}
+  public void autonomousInit() {
+    autonomousCommand = container.getAutonomousCommand();
+    if (autonomousCommand != null) CommandScheduler.getInstance().schedule(autonomousCommand);
+  }
 
   /** This function is called periodically during autonomous. */
   @Override
@@ -70,17 +84,14 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once each time the robot enters teleoperated mode. */
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+    if (autonomousCommand != null) {
+      CommandScheduler.getInstance().cancel(autonomousCommand);
+      autonomousCommand = null;
+    }
+  }
 
   /** This function is called periodically during teleoperated mode. */
   @Override
   public void teleopPeriodic() {}
-
-  /** This function is called once each time the robot enters utility mode. */
-  @Override
-  public void utilityInit() {}
-
-  /** This function is called periodically during utility mode. */
-  @Override
-  public void utilityPeriodic() {}
 }
