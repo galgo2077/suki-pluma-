@@ -17,8 +17,30 @@ import org.wpilib.framework.RobotBase;
 public final class SystemConstants {
   public static final Mode simMode = Mode.SIM;
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
+  public static final ControllerMode DRIVER_CONTROLLER_MODE = ControllerMode.XBOX;
+  public static final int DRIVER_PORT = 0;
+  public static final double DRIVER_DEADBAND = 0.10; // TODO TUNE: driver deadband
+  public static final OdometryMode ODOMETRY_MODE = OdometryMode.ODOMETRY_LIMELIGHT;
+  public static final RoboRIOVersion ROBORIO_VERSION = RoboRIOVersion.RIO_2;
 
-  public static enum Mode {
+  public enum ControllerMode {
+    XBOX,
+    GENERIC_JOYSTICK
+  }
+
+  /** Deploy-time localization selection. Camera loss always falls back to wheel/gyro odometry. */
+  public enum OdometryMode {
+    ODOMETRY_ONLY,
+    ODOMETRY_LIMELIGHT
+  }
+
+  /** Selects hardware-compatible optimizations. */
+  public enum RoboRIOVersion {
+    RIO_1,
+    RIO_2
+  }
+
+  public enum Mode {
     /** Running on a real robot. */
     REAL,
 

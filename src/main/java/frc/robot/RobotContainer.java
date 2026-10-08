@@ -1,11 +1,17 @@
 package frc.robot;
 
-import frc.robot.commands.DriveCommand;
-import frc.robot.commands.DriveHeadingCommand;
-import frc.robot.controllers.DriverController;
-import frc.robot.controllers.GenericJoystickDriverController;
-import frc.robot.controllers.XboxDriverController;
-import frc.robot.subsystems.drive.Drive;
+import frc.robot.Commands.DriveCommand;
+import frc.robot.Commands.DriveHeadingCommand;
+import frc.robot.Constants.SystemConstants;
+import frc.robot.Constants.VisionConstants;
+import frc.robot.Controllers.DriverController;
+import frc.robot.Controllers.GenericJoystickDriverController;
+import frc.robot.Controllers.XboxDriverController;
+import frc.robot.Subsystems.drive.Drive;
+import frc.robot.Subsystems.vision.Vision;
+import frc.robot.Subsystems.vision.VisionIO;
+import frc.robot.Subsystems.vision.VisionIOLimelight;
+import frc.robot.Subsystems.vision.VisionIOSim;
 import org.wpilib.command3.Command;
 import org.wpilib.command3.Scheduler;
 import org.wpilib.command3.Trigger;
@@ -13,27 +19,33 @@ import org.wpilib.math.geometry.Pose2d;
 
 /** Driver controls: field-relative driving on port 0. */
 public final class RobotContainer {
-  private enum ControllerMode {
-    XBOX,
-    GENERIC_JOYSTICK
-  }
-
-  private static final ControllerMode DRIVER_MODE = ControllerMode.XBOX;
-  private static final int DRIVER_PORT = 0;
-
   private final Drive drive = new Drive();
+  private final Vision vision;
   private final DriverController controller;
   private final DriveCommand driveCommand;
 
   public RobotContainer() {
     controller =
-        switch (DRIVER_MODE) {
-          case XBOX -> new XboxDriverController(DRIVER_PORT);
-          case GENERIC_JOYSTICK -> new GenericJoystickDriverController(DRIVER_PORT);
+        switch (SystemConstants.DRIVER_CONTROLLER_MODE) {
+          case XBOX -> new XboxDriverController(SystemConstants.DRIVER_PORT);
+          case GENERIC_JOYSTICK -> new GenericJoystickDriverController(SystemConstants.DRIVER_PORT);
         };
     driveCommand = new DriveCommand(drive, controller);
     drive.setDefaultCommand(driveCommand);
     Scheduler.getDefault().addPeriodic(drive::periodic);
+    VisionIO visionIO =
+        switch (SystemConstants.currentMode) {
+          case REAL -> new VisionIOLimelight(VisionConstants.LIMELIGHT_HOSTNAME, drive::getHeading);
+          case SIM -> new VisionIOSim();
+          case REPLAY -> new VisionIO() {};
+        };
+    vision =
+        new Vision(
+            drive::addVisionMeasurement,
+            drive::getAngularVelocityRadiansPerSec,
+            SystemConstants.ODOMETRY_MODE,
+            visionIO);
+    Scheduler.getDefault().addPeriodic(vision::periodic);
     new Trigger(() -> controller.pov() != DriverController.POV_CENTER)
         .whileTrue(new DriveHeadingCommand(drive, controller));
     new Trigger(controller::reset)
