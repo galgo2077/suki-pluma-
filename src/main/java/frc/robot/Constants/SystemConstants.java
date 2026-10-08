@@ -20,6 +20,10 @@ public final class SystemConstants {
   public static final ControllerMode DRIVER_CONTROLLER_MODE = ControllerMode.XBOX;
   public static final int DRIVER_PORT = 0;
   public static final double DRIVER_DEADBAND = 0.20; // TODO TUNE: driver deadband
+  // TODO HARDWARE: verify shooter USB assignments before competition.
+  public static final int JOYSTICK_PORT = 0;
+  public static final int XBOX_PORT = 1;
+  public static final double XBOX_TRIGGER_THRESHOLD = 0.5;
   public static final OdometryMode ODOMETRY_MODE = OdometryMode.ODOMETRY_LIMELIGHT;
   public static final RoboRIOVersion ROBORIO_VERSION = RoboRIOVersion.RIO_2;
 
