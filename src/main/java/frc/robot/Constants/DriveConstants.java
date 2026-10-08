@@ -19,10 +19,10 @@ public final class DriveConstants {
   public static final double TRACK_WIDTH = 0.6858;
   public static final double WHEEL_BASE = 0.6858;
   public static final Translation2d[] MODULE_TRANSLATIONS = {
-    new Translation2d(WHEEL_BASE / 2, TRACK_WIDTH / 2), // TODO MEASURE: FL x/y position, m
-    new Translation2d(WHEEL_BASE / 2, -TRACK_WIDTH / 2), // TODO MEASURE: FR x/y position, m
-    new Translation2d(-WHEEL_BASE / 2, TRACK_WIDTH / 2), // TODO MEASURE: BL x/y position, m
-    new Translation2d(-WHEEL_BASE / 2, -TRACK_WIDTH / 2) // TODO MEASURE: BR x/y position, m
+    new Translation2d(WHEEL_BASE / 2, TRACK_WIDTH / 2), // FL x/y = +0.3429 m, +0.3429 m
+    new Translation2d(WHEEL_BASE / 2, -TRACK_WIDTH / 2), // FR x/y = +0.3429 m, -0.3429 m
+    new Translation2d(-WHEEL_BASE / 2, TRACK_WIDTH / 2), // BL x/y = -0.3429 m, +0.3429 m
+    new Translation2d(-WHEEL_BASE / 2, -TRACK_WIDTH / 2) // BR x/y = -0.3429 m, -0.3429 m
   };
 
   // TODO MEASURE: real robot mass (kg), MOI (kg·m²), wheel COF (unitless), current limit (A),
@@ -37,7 +37,7 @@ public final class DriveConstants {
   public static final OptionalDouble DRIVE_CURRENT_LIMIT_AMPS = OptionalDouble.empty();
   public static final OptionalInt DRIVE_MOTORS_PER_MODULE = OptionalInt.empty();
 
-  // SIMULATION TEST ONLY: not verified hardware measurements.
+  // SIM ONLY: synthetic mass, MOI, COF, current limit, and motor count; measured geometry below.
   public static final double SIM_TEST_ROBOT_MASS_KG = 50.0;
   public static final double SIM_TEST_ROBOT_MOI_KG_METERS_SQUARED = 5.0;
   public static final double SIM_TEST_WHEEL_RADIUS_METERS = WHEEL_RADIUS_METERS.getAsDouble();
