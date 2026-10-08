@@ -12,6 +12,7 @@ import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
+import frc.robot.Commands.ShootCommand;
 import frc.robot.Constants.ShooterConstants;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +40,7 @@ class ShooterTest {
 
   @Test
   void shootingCommandTargetsBothKrakensAndStopsOnRelease() {
-    var command = shooter.shootCommand(() -> 3000.0);
+    var command = new ShootCommand(shooter, () -> 3000.0);
     command.initialize();
     command.execute();
     shooter.periodic();

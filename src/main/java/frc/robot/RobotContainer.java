@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Commands.DriveCommand;
 import frc.robot.Commands.DriveShooterAimCommand;
+import frc.robot.Commands.ShootCommand;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.SystemConstants;
 import frc.robot.Constants.VisionConstants;
@@ -94,7 +95,7 @@ public final class RobotContainer {
       combinedShootTrigger(
               () -> shooterJoystick.getRawButton(1),
               shooterXbox.rightTrigger(SystemConstants.XBOX_TRIGGER_THRESHOLD))
-          .whileTrue(shooter.shootCommand(this::shooterTargetRpm));
+          .whileTrue(new ShootCommand(shooter, this::shooterTargetRpm));
     new Trigger(controller::aimToggle).toggleOnTrue(shooterAimCommand);
     new Trigger(controller::reset)
         .onTrue(

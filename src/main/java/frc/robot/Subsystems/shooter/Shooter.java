@@ -3,7 +3,6 @@ package frc.robot.Subsystems.shooter;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 /** Interlocks feeding on independently measured speed from both flywheel motors. */
@@ -132,10 +131,6 @@ public final class Shooter extends SubsystemBase {
 
   public boolean isReady() {
     return state == State.READY;
-  }
-
-  public Command shootCommand(DoubleSupplier targetRpmSupplier) {
-    return runEnd(() -> start(targetRpmSupplier.getAsDouble()), this::stop).withName("Shoot");
   }
 
   public Command commissionKraken1Command(double rpm) {
