@@ -21,7 +21,7 @@ public final class SystemConstants {
   public static final int DRIVER_PORT = 0;
   public static final double DRIVER_DEADBAND =
       0.20; // TODO TUNE: unitless joystick fraction, 0.0–1.0
-  // TODO HARDWARE: verify shooter USB port numbers (integer).
+  // Driver station USB port 0: the on-field driver controller.
   public static final int JOYSTICK_PORT = 0;
   public static final int XBOX_PORT = 0;
   public static final double XBOX_TRIGGER_THRESHOLD = 0.5;
