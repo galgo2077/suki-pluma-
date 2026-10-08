@@ -19,8 +19,9 @@ public final class SystemConstants {
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
   public static final ControllerMode DRIVER_CONTROLLER_MODE = ControllerMode.XBOX;
   public static final int DRIVER_PORT = 0;
-  public static final double DRIVER_DEADBAND = 0.20; // TODO TUNE: driver deadband
-  // TODO HARDWARE: verify shooter USB assignments before competition.
+  public static final double DRIVER_DEADBAND =
+      0.20; // TODO TUNE: unitless joystick fraction, 0.0–1.0
+  // TODO HARDWARE: verify shooter USB port numbers (integer).
   public static final int JOYSTICK_PORT = 0;
   public static final int XBOX_PORT = 1;
   public static final double XBOX_TRIGGER_THRESHOLD = 0.5;

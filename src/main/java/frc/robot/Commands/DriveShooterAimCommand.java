@@ -18,7 +18,7 @@ import org.littletonrobotics.junction.Logger;
 
 /** Field-relative driver translation while the fixed shooter tracks the alliance Hub. */
 public final class DriveShooterAimCommand extends Command {
-  // TODO CALIBRATE: verify fixed shooter forward offset relative to robot +X
+  // TODO CALIBRATE: fixed shooter forward offset from robot +X, rad.
   public static final Rotation2d SHOOTER_FORWARD_OFFSET = new Rotation2d();
   private static final double MIN_TARGET_DISTANCE_METERS = 1e-6;
 

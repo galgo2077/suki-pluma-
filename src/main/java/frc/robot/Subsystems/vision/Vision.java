@@ -55,7 +55,7 @@ public final class Vision extends SubsystemBase {
       accepted.add(observation.pose());
       double factor =
           Math.pow(observation.averageTagDistance(), 2.0)
-              / observation.tagCount(); // TODO TUNE: distance and tag-count confidence scaling
+              / observation.tagCount(); // TODO TUNE: distance is m; tag count is unitless
       linearStdDev = LINEAR_STD_DEV_BASELINE * factor;
       angularStdDev = ANGULAR_STD_DEV_BASELINE * factor;
       if (odometryMode == OdometryMode.ODOMETRY_LIMELIGHT)
@@ -89,9 +89,9 @@ public final class Vision extends SubsystemBase {
         || !finite(pose.getRotation().getY())
         || !finite(pose.getRotation().getZ())
         || Math.abs(pose.getZ()) > MAX_Z_ERROR_METERS
-        || pose.getX() < 0.0 // TODO TUNE: field X margin
+        || pose.getX() < 0.0 // TODO TUNE: field X margin, m
         || pose.getX() > APRILTAG_LAYOUT.getFieldLength()
-        || pose.getY() < 0.0 // TODO TUNE: field Y margin
+        || pose.getY() < 0.0 // TODO TUNE: field Y margin, m
         || pose.getY() > APRILTAG_LAYOUT.getFieldWidth();
   }
 

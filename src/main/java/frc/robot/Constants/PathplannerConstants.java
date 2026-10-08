@@ -8,7 +8,7 @@ import java.util.Optional;
 
 /** PathPlanner-only configuration derived from the drivetrain's single source of truth. */
 public final class PathplannerConstants {
-  // TODO TUNE: characterize path-following gains before enabling competition autonomous.
+  // TODO TUNE: path-following gains; translation error is m, rotation error is rad.
   public static final PIDConstants TRANSLATION_PID = new PIDConstants(0.0);
   public static final PIDConstants ROTATION_PID = new PIDConstants(0.0);
 

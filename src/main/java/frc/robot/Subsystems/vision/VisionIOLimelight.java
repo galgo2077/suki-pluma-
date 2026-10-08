@@ -16,7 +16,7 @@ import java.util.Set;
 /** Limelight 2 AprilTag adapter using NetworkTables. */
 public final class VisionIOLimelight implements VisionIO {
   private static final long CONNECTION_TIMEOUT_MICROS =
-      250_000; // TODO TUNE: Limelight disconnect timeout
+      250_000; // TODO TUNE: Limelight disconnect timeout, µs
   private final DoubleSubscriber heartbeatSubscriber;
   private final DoubleArraySubscriber aprilTagSubscriber;
 

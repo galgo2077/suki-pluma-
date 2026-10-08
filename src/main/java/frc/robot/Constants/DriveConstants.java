@@ -11,9 +11,10 @@ public final class DriveConstants {
 
   public static final double MAX_SPEED = 4.5; // TODO TUNE: real maximum linear/module speed, m/s
   public static final double MAX_OMEGA = Math.PI; // TODO TUNE: real maximum angular speed, rad/s
-  public static final double HEADING_KP = 4.0; // TODO TUNE: real heading kP
-  public static final double HEADING_KI = 0.0; // TODO TUNE: real heading kI
-  public static final double HEADING_KD = 0.0; // TODO TUNE: real heading kD
+  // TODO TUNE: heading PID for error in rad and output in rad/s.
+  public static final double HEADING_KP = 4.0;
+  public static final double HEADING_KI = 0.0;
+  public static final double HEADING_KD = 0.0;
   public static final double TRACK_WIDTH = 0.55; // TODO MEASURE: track width, m
   public static final double WHEEL_BASE = 0.55; // TODO MEASURE: wheelbase, m
   public static final Translation2d[] MODULE_TRANSLATIONS = {
@@ -42,11 +43,10 @@ public final class DriveConstants {
   public static final int SIM_TEST_DRIVE_MOTORS_PER_MODULE = 1;
 
   public static final SteeringReferenceMode[] STEERING_REFERENCE_MODES = {
-    SteeringReferenceMode.ABSOLUTE_ENCODER, // TODO CALIBRATE: FL absolute encoder offset
-    SteeringReferenceMode.ABSOLUTE_ENCODER, // TODO CALIBRATE: FR absolute encoder offset
-    SteeringReferenceMode.ABSOLUTE_ENCODER, // TODO CALIBRATE: BL absolute encoder offset
-    // TODO CALIBRATE / TEMPORARY FALLBACK: physically align BR to its zero reference before
-    // startup.
+    SteeringReferenceMode.ABSOLUTE_ENCODER, // TODO CALIBRATE: FL absolute encoder offset, rad
+    SteeringReferenceMode.ABSOLUTE_ENCODER, // TODO CALIBRATE: FR absolute encoder offset, rad
+    SteeringReferenceMode.ABSOLUTE_ENCODER, // TODO CALIBRATE: BL absolute encoder offset, rad
+    // TODO CALIBRATE / TEMPORARY FALLBACK: physically align BR to its zero reference, 0 rad.
     SteeringReferenceMode.MANUAL_ZERO
   };
 
@@ -62,7 +62,8 @@ public final class DriveConstants {
       Integer turnCurrentLimitAmps,
       Double absoluteOffsetRadians) {}
 
-  // TODO HARDWARE: enter IDs, inversion, current limits, and measured absolute offsets.
+  // TODO HARDWARE: enter CAN IDs (integer), DIO channels (integer), inversions (boolean), current
+  // limits (A), and absolute offsets (rad).
   // FL, FR, and BL use CANcoders; BR uses its Thrifty Through Bore Encoder on DIO.
   public static final ModuleHardware[] MODULE_HARDWARE = {
     new ModuleHardware(null, null, null, null, null, null, null, null, null),
@@ -71,7 +72,7 @@ public final class DriveConstants {
     new ModuleHardware(null, null, null, null, null, null, null, null, null)
   };
 
-  // TODO HARDWARE: Pigeon CAN ID, mounting, and yaw sign.
+  // TODO HARDWARE: Pigeon CAN ID (integer), mounting orientation, and yaw sign (positive rad).
   public static final Integer PIGEON_CAN_ID = null;
 
   // TODO MEASURE: conversion factors in m/motor rotation, m/s per motor RPM, rad/motor rotation,
@@ -81,7 +82,7 @@ public final class DriveConstants {
   public static final double TURN_POSITION_RADIANS_PER_MOTOR_ROTATION = Double.NaN;
   public static final double TURN_VELOCITY_RADIANS_PER_SECOND_PER_RPM = Double.NaN;
 
-  // TODO TUNE: SPARK MAX drive/turn closed-loop gains.
+  // TODO TUNE: SPARK MAX P gains: duty-cycle output per m/s (drive) and per rad (turn).
   public static final double DRIVE_KP = Double.NaN;
   public static final double TURN_KP = Double.NaN;
 

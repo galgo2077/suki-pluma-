@@ -6,27 +6,28 @@ import edu.wpi.first.math.geometry.Translation2d;
 public final class ShooterConstants {
   private ShooterConstants() {}
 
-  // TODO HARDWARE: assign Kraken #1 CAN ID.
+  // TODO HARDWARE: assign Kraken #1 CAN ID (integer).
   public static final Integer KRAKEN_1_CAN_ID = null;
-  // TODO HARDWARE: assign Kraken #2 CAN ID.
+  // TODO HARDWARE: assign Kraken #2 CAN ID (integer).
   public static final Integer KRAKEN_2_CAN_ID = null;
-  // TODO HARDWARE: assign NEO feeder CAN ID.
+  // TODO HARDWARE: assign NEO feeder CAN ID (integer).
   public static final Integer FEEDER_CAN_ID = null;
-  // TODO HARDWARE: verify each motor's positive direction.
+  // TODO HARDWARE: verify each motor's positive direction (boolean inversion).
   public static final Boolean KRAKEN_1_INVERTED = null;
   public static final Boolean KRAKEN_2_INVERTED = null;
   public static final Boolean FEEDER_INVERTED = null;
   // TODO MEASURE: motor rotations per flywheel rotation (unitless ratio).
   public static final double MOTOR_ROTATIONS_PER_FLYWHEEL_ROTATION = Double.NaN;
-  // TODO CALIBRATE: acceptable flywheel RPM tolerance.
+  // TODO CALIBRATE: acceptable flywheel-speed tolerance, flywheel RPM.
   public static final double RPM_TOLERANCE = Double.NaN;
-  // TODO CALIBRATE: Phoenix 6 velocity-loop gains for both Kraken motors.
+  // TODO CALIBRATE: Phoenix 6 velocity-loop gains using motor RPS (kP V/RPS, kI V/(RPS·s),
+  // kD V·s/RPS, kS V, kV V/RPS).
   public static final Double KRAKEN_KP = null;
   public static final Double KRAKEN_KI = null;
   public static final Double KRAKEN_KD = null;
   public static final Double KRAKEN_KS = null;
   public static final Double KRAKEN_KV = null;
-  // TODO CALIBRATE: NEO feeder output while automatic feeding is enabled.
+  // TODO CALIBRATE: NEO feeder output, normalized duty cycle from -1.0 to +1.0.
   public static final double REAL_FEEDER_OUTPUT = Double.NaN;
   // TODO MEASURE: shooter-exit x/y position from robot center, m.
   public static final Translation2d SHOOTER_EXIT_FROM_ROBOT_CENTER_METERS = null;

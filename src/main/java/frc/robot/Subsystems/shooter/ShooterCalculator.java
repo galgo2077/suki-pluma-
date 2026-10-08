@@ -21,7 +21,7 @@ public final class ShooterCalculator {
           FIELD_LENGTH_METERS - HUB_DISTANCE_FROM_ALLIANCE_WALL_METERS, FIELD_WIDTH_METERS / 2.0);
   private static final InterpolatingDoubleTreeMap DISTANCE_TO_RPM =
       new InterpolatingDoubleTreeMap();
-  // TODO CALIBRATE: add Suki Pluma distance-to-RPM points and matching inclusive range limits.
+  // TODO CALIBRATE: add distance-in-m to flywheel-RPM points and inclusive range limits in m.
   private static final double MIN_CALIBRATED_DISTANCE_METERS = Double.NaN;
   private static final double MAX_CALIBRATED_DISTANCE_METERS = Double.NaN;
 
