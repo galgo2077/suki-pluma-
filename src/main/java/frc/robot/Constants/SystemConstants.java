@@ -23,7 +23,7 @@ public final class SystemConstants {
       0.20; // TODO TUNE: unitless joystick fraction, 0.0–1.0
   // TODO HARDWARE: verify shooter USB port numbers (integer).
   public static final int JOYSTICK_PORT = 0;
-  public static final int XBOX_PORT = 1;
+  public static final int XBOX_PORT = 0;
   public static final double XBOX_TRIGGER_THRESHOLD = 0.5;
   public static final OdometryMode ODOMETRY_MODE = OdometryMode.ODOMETRY_LIMELIGHT;
   public static final RoboRIOVersion ROBORIO_VERSION = RoboRIOVersion.RIO_2;
