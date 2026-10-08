@@ -9,6 +9,8 @@ import org.littletonrobotics.junction.Logger;
 import org.wpilib.command3.Command;
 import org.wpilib.command3.Coroutine;
 import org.wpilib.command3.Mechanism;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.driverstation.internal.DriverStationBackend;
 import org.wpilib.math.util.MathUtil;
 
 /** Default field-oriented stick driving. */
@@ -30,19 +32,24 @@ public final class DriveCommand implements Command {
   }
 
   void executeOnce() {
-    double forward = controller.forward();
+    double forward =
+        forwardForAlliance(
+            controller.forward(), DriverStationBackend.getAlliance().orElse(Alliance.BLUE));
     double strafe = controller.strafe();
     double rotation = controller.rotation();
     Logger.recordOutput("Drive/ControlMode", "STICK");
     Logger.recordOutput("Driver/Forward", forward);
     Logger.recordOutput("Driver/Strafe", strafe);
     Logger.recordOutput("Driver/Rotation", rotation);
-    Logger.recordOutput("Driver/POV", controller.pov());
     drive.driveFieldRelative(
         MathUtil.applyDeadband(forward, SystemConstants.DRIVER_DEADBAND) * DriveConstants.MAX_SPEED,
         MathUtil.applyDeadband(strafe, SystemConstants.DRIVER_DEADBAND) * DriveConstants.MAX_SPEED,
         MathUtil.applyDeadband(rotation, SystemConstants.DRIVER_DEADBAND)
             * DriveConstants.MAX_OMEGA);
+  }
+
+  static double forwardForAlliance(double forward, Alliance alliance) {
+    return alliance == Alliance.BLUE ? -forward : forward;
   }
 
   @Override

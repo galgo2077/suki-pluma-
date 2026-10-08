@@ -2,15 +2,16 @@ package frc.robot.Controllers;
 
 /** Normalized driver input independent of the physical HID. */
 public interface DriverController {
-  int POV_CENTER = -1;
-
   double forward();
 
   double strafe();
 
   double rotation();
 
-  int pov();
-
   boolean reset();
+
+  /** Xbox A shooter-target aim toggle; generic joysticks intentionally have no binding. */
+  default boolean aimToggle() {
+    return false;
+  }
 }

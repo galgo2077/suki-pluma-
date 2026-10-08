@@ -1,7 +1,7 @@
 package frc.robot;
 
 import frc.robot.Commands.DriveCommand;
-import frc.robot.Commands.DriveHeadingCommand;
+import frc.robot.Commands.DriveShooterAimCommand;
 import frc.robot.Constants.SystemConstants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.Controllers.DriverController;
@@ -23,6 +23,7 @@ public final class RobotContainer {
   private final Vision vision;
   private final DriverController controller;
   private final DriveCommand driveCommand;
+  private final DriveShooterAimCommand shooterAimCommand;
 
   public RobotContainer() {
     controller =
@@ -31,6 +32,7 @@ public final class RobotContainer {
           case GENERIC_JOYSTICK -> new GenericJoystickDriverController(SystemConstants.DRIVER_PORT);
         };
     driveCommand = new DriveCommand(drive, controller);
+    shooterAimCommand = new DriveShooterAimCommand(drive, controller);
     drive.setDefaultCommand(driveCommand);
     Scheduler.getDefault().addPeriodic(drive::periodic);
     VisionIO visionIO =
@@ -46,8 +48,7 @@ public final class RobotContainer {
             SystemConstants.ODOMETRY_MODE,
             visionIO);
     Scheduler.getDefault().addPeriodic(vision::periodic);
-    new Trigger(() -> controller.pov() != DriverController.POV_CENTER)
-        .whileTrue(new DriveHeadingCommand(drive, controller));
+    new Trigger(controller::aimToggle).toggleOnTrue(shooterAimCommand);
     new Trigger(controller::reset)
         .onTrue(
             Command.requiring(drive)
