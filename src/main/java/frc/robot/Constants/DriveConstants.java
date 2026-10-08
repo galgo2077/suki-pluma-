@@ -15,8 +15,9 @@ public final class DriveConstants {
   public static final double HEADING_KP = 4.0;
   public static final double HEADING_KI = 0.0;
   public static final double HEADING_KD = 0.0;
-  public static final double TRACK_WIDTH = 0.55; // TODO MEASURE: track width, m
-  public static final double WHEEL_BASE = 0.55; // TODO MEASURE: wheelbase, m
+  // TEAM MEASUREMENT: wheel-center span, 27 in = 0.6858 m.
+  public static final double TRACK_WIDTH = 0.6858;
+  public static final double WHEEL_BASE = 0.6858;
   public static final Translation2d[] MODULE_TRANSLATIONS = {
     new Translation2d(WHEEL_BASE / 2, TRACK_WIDTH / 2), // TODO MEASURE: FL x/y position, m
     new Translation2d(WHEEL_BASE / 2, -TRACK_WIDTH / 2), // TODO MEASURE: FR x/y position, m
@@ -24,11 +25,14 @@ public final class DriveConstants {
     new Translation2d(-WHEEL_BASE / 2, -TRACK_WIDTH / 2) // TODO MEASURE: BR x/y position, m
   };
 
-  // TODO MEASURE: real robot properties in kg, kg·m², m, unitless, unitless, A, and count.
+  // TODO MEASURE: real robot mass (kg), MOI (kg·m²), wheel COF (unitless), current limit (A),
+  // and motor count. Wheel radius and L2 reduction below are supplied team measurements/specs.
   public static final OptionalDouble ROBOT_MASS_KG = OptionalDouble.empty();
   public static final OptionalDouble ROBOT_MOI_KG_METERS_SQUARED = OptionalDouble.empty();
-  public static final OptionalDouble WHEEL_RADIUS_METERS = OptionalDouble.empty();
-  public static final OptionalDouble DRIVE_GEAR_RATIO = OptionalDouble.empty();
+  // TEAM MEASUREMENT: 1.5 in = 0.0381 m wheel radius.
+  public static final OptionalDouble WHEEL_RADIUS_METERS = OptionalDouble.of(0.0381);
+  // FIXED SPEC: SDS MK4i L2 motor rotations per wheel rotation.
+  public static final OptionalDouble DRIVE_GEAR_RATIO = OptionalDouble.of(6.75);
   public static final OptionalDouble WHEEL_COF = OptionalDouble.empty();
   public static final OptionalDouble DRIVE_CURRENT_LIMIT_AMPS = OptionalDouble.empty();
   public static final OptionalInt DRIVE_MOTORS_PER_MODULE = OptionalInt.empty();
@@ -36,8 +40,8 @@ public final class DriveConstants {
   // SIMULATION TEST ONLY: not verified hardware measurements.
   public static final double SIM_TEST_ROBOT_MASS_KG = 50.0;
   public static final double SIM_TEST_ROBOT_MOI_KG_METERS_SQUARED = 5.0;
-  public static final double SIM_TEST_WHEEL_RADIUS_METERS = 0.0508;
-  public static final double SIM_TEST_DRIVE_GEAR_RATIO = 6.0;
+  public static final double SIM_TEST_WHEEL_RADIUS_METERS = WHEEL_RADIUS_METERS.getAsDouble();
+  public static final double SIM_TEST_DRIVE_GEAR_RATIO = DRIVE_GEAR_RATIO.getAsDouble();
   public static final double SIM_TEST_WHEEL_COF = 1.0;
   public static final double SIM_TEST_DRIVE_CURRENT_LIMIT_AMPS = 40.0;
   public static final int SIM_TEST_DRIVE_MOTORS_PER_MODULE = 1;
@@ -75,10 +79,12 @@ public final class DriveConstants {
   // TODO HARDWARE: Pigeon CAN ID (integer), mounting orientation, and yaw sign (positive rad).
   public static final Integer PIGEON_CAN_ID = null;
 
-  // TODO MEASURE: conversion factors in m/motor rotation, m/s per motor RPM, rad/motor rotation,
-  // and rad/s per motor RPM.
-  public static final double DRIVE_POSITION_METERS_PER_MOTOR_ROTATION = Double.NaN;
-  public static final double DRIVE_VELOCITY_METERS_PER_SECOND_PER_RPM = Double.NaN;
+  // Derived from the supplied wheel radius and L2 reduction.
+  public static final double DRIVE_POSITION_METERS_PER_MOTOR_ROTATION =
+      2.0 * Math.PI * WHEEL_RADIUS_METERS.getAsDouble() / DRIVE_GEAR_RATIO.getAsDouble();
+  public static final double DRIVE_VELOCITY_METERS_PER_SECOND_PER_RPM =
+      DRIVE_POSITION_METERS_PER_MOTOR_ROTATION / 60.0;
+  // TODO MEASURE: steering conversion factors in rad/motor rotation and rad/s per motor RPM.
   public static final double TURN_POSITION_RADIANS_PER_MOTOR_ROTATION = Double.NaN;
   public static final double TURN_VELOCITY_RADIANS_PER_SECOND_PER_RPM = Double.NaN;
 
