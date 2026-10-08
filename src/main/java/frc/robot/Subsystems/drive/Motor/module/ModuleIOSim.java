@@ -1,10 +1,10 @@
 package frc.robot.Subsystems.drive.Motor.module;
 
-import org.wpilib.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 
 public class ModuleIOSim implements ModuleIO {
   private double position, velocity;
-  private Rotation2d angle = Rotation2d.ZERO;
+  private Rotation2d angle = new Rotation2d();
 
   @Override
   public void updateInputs(ModuleIOInputs in) {

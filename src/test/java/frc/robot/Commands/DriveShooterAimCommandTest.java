@@ -2,31 +2,32 @@ package frc.robot.Commands;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ShootingTargetConstants;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.Controllers.DriverController;
 import frc.robot.Subsystems.drive.Drive;
 import org.junit.jupiter.api.Test;
-import org.wpilib.driverstation.Alliance;
-import org.wpilib.math.geometry.Pose2d;
-import org.wpilib.math.geometry.Rotation2d;
-import org.wpilib.math.geometry.Translation2d;
 
 class DriveShooterAimCommandTest {
-  private static final Translation2d ORIGIN = Translation2d.ZERO;
+  private static final Translation2d ORIGIN = new Translation2d();
 
   @Test
   void targetBearingsAndShooterOffsetUseFieldGeometry() {
-    assertHeading(ORIGIN, new Translation2d(1, 0), Rotation2d.ZERO, 0);
-    assertHeading(ORIGIN, new Translation2d(0, 1), Rotation2d.ZERO, 90);
-    assertHeading(ORIGIN, new Translation2d(-1, 0), Rotation2d.ZERO, 180);
-    assertHeading(ORIGIN, new Translation2d(0, -1), Rotation2d.ZERO, -90);
+    assertHeading(ORIGIN, new Translation2d(1, 0), new Rotation2d(), 0);
+    assertHeading(ORIGIN, new Translation2d(0, 1), new Rotation2d(), 90);
+    assertHeading(ORIGIN, new Translation2d(-1, 0), new Rotation2d(), 180);
+    assertHeading(ORIGIN, new Translation2d(0, -1), new Rotation2d(), -90);
     assertHeading(ORIGIN, new Translation2d(0, 1), Rotation2d.fromDegrees(180), -90);
   }
 
   @Test
   void headingUpdatesAsRobotMovesAroundTarget() {
-    Translation2d target = Translation2d.ZERO;
+    Translation2d target = new Translation2d();
     assertHeading(new Translation2d(0, -1), target, 90);
     assertHeading(new Translation2d(-1, 0), target, 0);
     assertHeading(new Translation2d(0, 1), target, -90);
@@ -37,7 +38,7 @@ class DriveShooterAimCommandTest {
   void zeroDistanceHasNoDesiredHeading() {
     assertTrue(
         DriveShooterAimCommand.desiredHeading(
-                new Pose2d(ORIGIN, Rotation2d.ZERO), ORIGIN, Rotation2d.ZERO)
+                new Pose2d(ORIGIN, new Rotation2d()), ORIGIN, new Rotation2d())
             .isEmpty());
   }
 
@@ -67,28 +68,28 @@ class DriveShooterAimCommandTest {
     assertTrue(drive.omega < Math.toRadians(10));
     var stick = new DriveCommand(drive, new Input(0, 0, 0));
     var aim = new DriveShooterAimCommand(drive, new Input(0, 0, 0));
-    assertTrue(stick.conflictsWith(aim));
+    assertTrue(stick.getRequirements().stream().anyMatch(aim.getRequirements()::contains));
   }
 
   @Test
   void allianceTargetsAreOfficialHubMirrors() {
-    assertEquals(ShootingTargetConstants.BLUE_HUB, ShootingTargetConstants.hubFor(Alliance.BLUE));
-    assertEquals(ShootingTargetConstants.RED_HUB, ShootingTargetConstants.hubFor(Alliance.RED));
+    assertEquals(ShootingTargetConstants.BLUE_HUB, ShootingTargetConstants.hubFor(Alliance.Blue));
+    assertEquals(ShootingTargetConstants.RED_HUB, ShootingTargetConstants.hubFor(Alliance.Red));
     assertEquals(
         ShootingTargetConstants.BLUE_HUB.getX() + ShootingTargetConstants.RED_HUB.getX(),
-        org.wpilib.fields.Fields.FRC_2026_REBUILT_WELDED.length,
+        VisionConstants.APRILTAG_LAYOUT.getFieldLength(),
         1e-9);
   }
 
   private static void assertHeading(
       Translation2d robot, Translation2d target, double expectedDegrees) {
-    assertHeading(robot, target, Rotation2d.ZERO, expectedDegrees);
+    assertHeading(robot, target, new Rotation2d(), expectedDegrees);
   }
 
   private static void assertHeading(
       Translation2d robot, Translation2d target, Rotation2d offset, double expectedDegrees) {
     Rotation2d heading =
-        DriveShooterAimCommand.desiredHeading(new Pose2d(robot, Rotation2d.ZERO), target, offset)
+        DriveShooterAimCommand.desiredHeading(new Pose2d(robot, new Rotation2d()), target, offset)
             .orElseThrow();
     assertEquals(Rotation2d.fromDegrees(expectedDegrees), heading);
   }

@@ -1,28 +1,25 @@
 package frc.robot.Commands;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ShootingTargetConstants;
 import frc.robot.Constants.SystemConstants;
 import frc.robot.Controllers.DriverController;
 import frc.robot.Subsystems.drive.Drive;
 import java.util.Optional;
-import java.util.Set;
 import org.littletonrobotics.junction.Logger;
-import org.wpilib.command3.Command;
-import org.wpilib.command3.Coroutine;
-import org.wpilib.command3.Mechanism;
-import org.wpilib.driverstation.Alliance;
-import org.wpilib.driverstation.internal.DriverStationBackend;
-import org.wpilib.math.controller.PIDController;
-import org.wpilib.math.geometry.Pose2d;
-import org.wpilib.math.geometry.Rotation2d;
-import org.wpilib.math.geometry.Translation2d;
-import org.wpilib.math.util.MathUtil;
 
 /** Field-relative driver translation while the fixed shooter tracks the alliance Hub. */
-public final class DriveShooterAimCommand implements Command {
+public final class DriveShooterAimCommand extends Command {
   // TODO CALIBRATE: verify fixed shooter forward offset relative to robot +X
-  public static final Rotation2d SHOOTER_FORWARD_OFFSET = Rotation2d.ZERO;
+  public static final Rotation2d SHOOTER_FORWARD_OFFSET = new Rotation2d();
   private static final double MIN_TARGET_DISTANCE_METERS = 1e-6;
 
   private final Drive drive;
@@ -34,15 +31,13 @@ public final class DriveShooterAimCommand implements Command {
   public DriveShooterAimCommand(Drive drive, DriverController controller) {
     this.drive = drive;
     this.controller = controller;
+    addRequirements(drive);
     headingController.enableContinuousInput(-Math.PI, Math.PI);
   }
 
   @Override
-  public void run(Coroutine coroutine) {
-    while (true) {
-      executeOnce();
-      coroutine.yield();
-    }
+  public void execute() {
+    executeOnce();
   }
 
   void executeOnce() {
@@ -55,7 +50,7 @@ public final class DriveShooterAimCommand implements Command {
         desired
             .map(
                 heading ->
-                    Math.clamp(
+                    MathUtil.clamp(
                         headingController.calculate(current.getRadians(), heading.getRadians()),
                         -DriveConstants.MAX_OMEGA,
                         DriveConstants.MAX_OMEGA))
@@ -65,7 +60,7 @@ public final class DriveShooterAimCommand implements Command {
 
     Logger.recordOutput("Drive/ControlMode", "SHOOTER_AIM");
     Logger.recordOutput("Drive/Aim/Enabled", true);
-    Logger.recordOutput("Drive/Aim/TargetPose", new Pose2d(target, Rotation2d.ZERO));
+    Logger.recordOutput("Drive/Aim/TargetPose", new Pose2d(target, new Rotation2d()));
     Logger.recordOutput(
         "Drive/Aim/TargetBearing", desiredHeading.plus(SHOOTER_FORWARD_OFFSET).getRadians());
     Logger.recordOutput("Drive/Aim/DesiredRobotHeading", desiredHeading.getRadians());
@@ -87,25 +82,15 @@ public final class DriveShooterAimCommand implements Command {
       Pose2d robotPose, Translation2d target, Rotation2d shooterForwardOffset) {
     Translation2d displacement = target.minus(robotPose.getTranslation());
     if (displacement.getNorm() < MIN_TARGET_DISTANCE_METERS) return Optional.empty();
-    return displacement.getAngle().map(angle -> angle.minus(shooterForwardOffset));
+    return Optional.of(displacement.getAngle().minus(shooterForwardOffset));
   }
 
   static Translation2d shootingTarget() {
-    return ShootingTargetConstants.hubFor(DriverStationBackend.getAlliance().orElse(Alliance.BLUE));
+    return ShootingTargetConstants.hubFor(DriverStation.getAlliance().orElse(Alliance.Blue));
   }
 
   @Override
-  public void onCancel() {
+  public void end(boolean interrupted) {
     Logger.recordOutput("Drive/Aim/Enabled", false);
-  }
-
-  @Override
-  public String name() {
-    return "DriveShooterAimCommand";
-  }
-
-  @Override
-  public Set<Mechanism> requirements() {
-    return Set.of(drive);
   }
 }

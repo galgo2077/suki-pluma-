@@ -1,7 +1,7 @@
 package frc.robot.Subsystems.vision;
 
+import edu.wpi.first.math.geometry.Pose3d;
 import org.littletonrobotics.junction.AutoLog;
-import org.wpilib.math.geometry.Pose3d;
 
 /** AprilTag-only localization camera interface. */
 public interface VisionIO {
@@ -13,17 +13,7 @@ public interface VisionIO {
   }
 
   record PoseObservation(
-      double timestamp,
-      Pose3d pose,
-      double ambiguity,
-      int tagCount,
-      double averageTagDistance,
-      PoseObservationType type) {}
-
-  enum PoseObservationType {
-    MEGATAG_1,
-    MEGATAG_2
-  }
+      double timestamp, Pose3d pose, double ambiguity, int tagCount, double averageTagDistance) {}
 
   default void updateInputs(VisionIOInputs inputs) {}
 }

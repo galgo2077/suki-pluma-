@@ -1,9 +1,9 @@
 package frc.robot.Controllers;
 
+import edu.wpi.first.wpilibj.Joystick;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
-import org.wpilib.driverstation.Joystick;
 
 /** Generic joystick driver input. */
 public final class GenericJoystickDriverController implements DriverController {

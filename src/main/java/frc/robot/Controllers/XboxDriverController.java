@@ -1,9 +1,10 @@
 package frc.robot.Controllers;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.XboxController;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
-import org.wpilib.driverstation.XboxController;
 
 /** Xbox driver input. */
 public final class XboxDriverController implements DriverController {
@@ -12,13 +13,27 @@ public final class XboxDriverController implements DriverController {
   private final DoubleSupplier rightX;
   private final BooleanSupplier reset;
   private final BooleanSupplier aimToggle;
+  private final BooleanSupplier connected;
 
   public XboxDriverController(int port) {
-    this(new XboxController(port));
+    this(
+        new XboxController(port),
+        () ->
+            DriverStation.isJoystickConnected(port) && DriverStation.getStickButtonCount(port) > 0);
   }
 
   XboxDriverController(XboxController xbox) {
-    this(xbox::getLeftX, xbox::getLeftY, xbox::getRightX, xbox::getYButton, xbox::getAButton);
+    this(xbox, () -> true);
+  }
+
+  private XboxDriverController(XboxController xbox, BooleanSupplier connected) {
+    this(
+        xbox::getLeftX,
+        xbox::getLeftY,
+        () -> xbox.getRawAxis(3),
+        xbox::getYButton,
+        xbox::getAButton,
+        connected);
   }
 
   XboxDriverController(
@@ -32,11 +47,22 @@ public final class XboxDriverController implements DriverController {
       DoubleSupplier rightX,
       BooleanSupplier reset,
       BooleanSupplier aimToggle) {
+    this(leftX, leftY, rightX, reset, aimToggle, () -> true);
+  }
+
+  XboxDriverController(
+      DoubleSupplier leftX,
+      DoubleSupplier leftY,
+      DoubleSupplier rightX,
+      BooleanSupplier reset,
+      BooleanSupplier aimToggle,
+      BooleanSupplier connected) {
     this.leftX = leftX;
     this.leftY = leftY;
     this.rightX = rightX;
     this.reset = reset;
     this.aimToggle = aimToggle;
+    this.connected = connected;
   }
 
   @Override
@@ -67,6 +93,6 @@ public final class XboxDriverController implements DriverController {
 
   @Override
   public boolean aimToggle() {
-    return aimToggle.getAsBoolean();
+    return connected.getAsBoolean() && aimToggle.getAsBoolean();
   }
 }

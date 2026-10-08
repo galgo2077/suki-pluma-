@@ -1,9 +1,9 @@
 package frc.robot.Subsystems.Odometry.Gyro;
 
-import org.wpilib.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 
 public class GyroIOSim implements GyroIO {
-  private Rotation2d yaw = Rotation2d.ZERO;
+  private Rotation2d yaw = new Rotation2d();
   private double yawVelocityRadPerSec;
 
   public void setYaw(Rotation2d value) {

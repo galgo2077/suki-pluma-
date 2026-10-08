@@ -1,7 +1,9 @@
 package frc.robot.Constants;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.Subsystems.drive.Motor.module.SteeringReferenceMode;
-import org.wpilib.math.geometry.Translation2d;
+import java.util.OptionalDouble;
+import java.util.OptionalInt;
 
 /** Current drivetrain values awaiting real-robot verification. */
 public final class DriveConstants {
@@ -20,6 +22,24 @@ public final class DriveConstants {
     new Translation2d(-WHEEL_BASE / 2, TRACK_WIDTH / 2), // TODO MEASURE: BL module position
     new Translation2d(-WHEEL_BASE / 2, -TRACK_WIDTH / 2) // TODO MEASURE: BR module position
   };
+
+  // Fill these from verified robot measurements before enabling path following.
+  public static final OptionalDouble ROBOT_MASS_KG = OptionalDouble.empty();
+  public static final OptionalDouble ROBOT_MOI_KG_METERS_SQUARED = OptionalDouble.empty();
+  public static final OptionalDouble WHEEL_RADIUS_METERS = OptionalDouble.empty();
+  public static final OptionalDouble DRIVE_GEAR_RATIO = OptionalDouble.empty();
+  public static final OptionalDouble WHEEL_COF = OptionalDouble.empty();
+  public static final OptionalDouble DRIVE_CURRENT_LIMIT_AMPS = OptionalDouble.empty();
+  public static final OptionalInt DRIVE_MOTORS_PER_MODULE = OptionalInt.empty();
+
+  // SIMULATION TEST ONLY: not verified hardware measurements.
+  public static final double SIM_TEST_ROBOT_MASS_KG = 50.0;
+  public static final double SIM_TEST_ROBOT_MOI_KG_METERS_SQUARED = 5.0;
+  public static final double SIM_TEST_WHEEL_RADIUS_METERS = 0.0508;
+  public static final double SIM_TEST_DRIVE_GEAR_RATIO = 6.0;
+  public static final double SIM_TEST_WHEEL_COF = 1.0;
+  public static final double SIM_TEST_DRIVE_CURRENT_LIMIT_AMPS = 40.0;
+  public static final int SIM_TEST_DRIVE_MOTORS_PER_MODULE = 1;
 
   public static final SteeringReferenceMode[] STEERING_REFERENCE_MODES = {
     SteeringReferenceMode.ABSOLUTE_ENCODER, // TODO CALIBRATE: FL absolute encoder offset

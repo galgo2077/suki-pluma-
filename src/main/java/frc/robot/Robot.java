@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.BuildConstants;
 import frc.robot.Constants.SystemConstants;
 import org.littletonrobotics.junction.LogFileUtil;
@@ -15,10 +17,12 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
-import org.wpilib.command3.Scheduler;
 
 public class Robot extends LoggedRobot {
+  @SuppressWarnings("unused")
   private final RobotContainer container = new RobotContainer();
+
+  private Command autonomousCommand;
 
   public Robot() {
     // Record metadata
@@ -64,12 +68,15 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically during all modes. */
   @Override
   public void robotPeriodic() {
-    Scheduler.getDefault().run();
+    CommandScheduler.getInstance().run();
   }
 
   /** This function is run once each time the robot enters autonomous mode. */
   @Override
-  public void autonomousInit() {}
+  public void autonomousInit() {
+    autonomousCommand = container.getAutonomousCommand();
+    if (autonomousCommand != null) CommandScheduler.getInstance().schedule(autonomousCommand);
+  }
 
   /** This function is called periodically during autonomous. */
   @Override
@@ -77,17 +84,14 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once each time the robot enters teleoperated mode. */
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+    if (autonomousCommand != null) {
+      CommandScheduler.getInstance().cancel(autonomousCommand);
+      autonomousCommand = null;
+    }
+  }
 
   /** This function is called periodically during teleoperated mode. */
   @Override
   public void teleopPeriodic() {}
-
-  /** This function is called once each time the robot enters utility mode. */
-  @Override
-  public void utilityInit() {}
-
-  /** This function is called periodically during utility mode. */
-  @Override
-  public void utilityPeriodic() {}
 }

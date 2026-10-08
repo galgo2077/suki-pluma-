@@ -1,40 +1,34 @@
 package frc.robot.Commands;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.SystemConstants;
 import frc.robot.Controllers.DriverController;
 import frc.robot.Subsystems.drive.Drive;
-import java.util.Set;
 import org.littletonrobotics.junction.Logger;
-import org.wpilib.command3.Command;
-import org.wpilib.command3.Coroutine;
-import org.wpilib.command3.Mechanism;
-import org.wpilib.driverstation.Alliance;
-import org.wpilib.driverstation.internal.DriverStationBackend;
-import org.wpilib.math.util.MathUtil;
 
 /** Default field-oriented stick driving. */
-public final class DriveCommand implements Command {
+public final class DriveCommand extends Command {
   private final Drive drive;
   private final DriverController controller;
 
   public DriveCommand(Drive drive, DriverController controller) {
     this.drive = drive;
     this.controller = controller;
+    addRequirements(drive);
   }
 
   @Override
-  public void run(Coroutine coroutine) {
-    while (true) {
-      executeOnce();
-      coroutine.yield();
-    }
+  public void execute() {
+    executeOnce();
   }
 
   void executeOnce() {
     double forward =
-        forwardForAlliance(
-            controller.forward(), DriverStationBackend.getAlliance().orElse(Alliance.BLUE));
+        forwardForAlliance(controller.forward(), DriverStation.getAlliance().orElse(Alliance.Blue));
     double strafe = controller.strafe();
     double rotation = controller.rotation();
     Logger.recordOutput("Drive/ControlMode", "STICK");
@@ -49,16 +43,6 @@ public final class DriveCommand implements Command {
   }
 
   static double forwardForAlliance(double forward, Alliance alliance) {
-    return alliance == Alliance.BLUE ? -forward : forward;
-  }
-
-  @Override
-  public String name() {
-    return "DriveCommand";
-  }
-
-  @Override
-  public Set<Mechanism> requirements() {
-    return Set.of(drive);
+    return alliance == Alliance.Blue ? -forward : forward;
   }
 }

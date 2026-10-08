@@ -7,7 +7,7 @@
 
 package frc.robot.Constants;
 
-import org.wpilib.framework.RobotBase;
+import edu.wpi.first.wpilibj.RobotBase;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -19,7 +19,7 @@ public final class SystemConstants {
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
   public static final ControllerMode DRIVER_CONTROLLER_MODE = ControllerMode.XBOX;
   public static final int DRIVER_PORT = 0;
-  public static final double DRIVER_DEADBAND = 0.10; // TODO TUNE: driver deadband
+  public static final double DRIVER_DEADBAND = 0.20; // TODO TUNE: driver deadband
   public static final OdometryMode ODOMETRY_MODE = OdometryMode.ODOMETRY_LIMELIGHT;
   public static final RoboRIOVersion ROBORIO_VERSION = RoboRIOVersion.RIO_2;
 

@@ -1,17 +1,16 @@
 package frc.robot.Constants;
 
-import org.wpilib.driverstation.Alliance;
-import org.wpilib.fields.Fields;
-import org.wpilib.math.geometry.Translation2d;
-import org.wpilib.math.util.Units;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 /** Official 2026 REBUILT Hub target centers in the WPILib blue-origin field frame. */
 public final class ShootingTargetConstants {
   private ShootingTargetConstants() {}
 
   private static final double HUB_CENTER_FROM_ALLIANCE_WALL = Units.inchesToMeters(158.6);
-  private static final double FIELD_LENGTH = Fields.FRC_2026_REBUILT_WELDED.length;
-  private static final double FIELD_WIDTH = Fields.FRC_2026_REBUILT_WELDED.width;
+  private static final double FIELD_LENGTH = VisionConstants.APRILTAG_LAYOUT.getFieldLength();
+  private static final double FIELD_WIDTH = VisionConstants.APRILTAG_LAYOUT.getFieldWidth();
 
   public static final Translation2d BLUE_HUB =
       new Translation2d(HUB_CENTER_FROM_ALLIANCE_WALL, FIELD_WIDTH / 2.0);
@@ -19,6 +18,6 @@ public final class ShootingTargetConstants {
       new Translation2d(FIELD_LENGTH - HUB_CENTER_FROM_ALLIANCE_WALL, FIELD_WIDTH / 2.0);
 
   public static Translation2d hubFor(Alliance alliance) {
-    return alliance == Alliance.RED ? RED_HUB : BLUE_HUB;
+    return alliance == Alliance.Red ? RED_HUB : BLUE_HUB;
   }
 }

@@ -2,11 +2,11 @@ package frc.robot.Commands;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Controllers.DriverController;
 import frc.robot.Subsystems.drive.Drive;
 import org.junit.jupiter.api.Test;
-import org.wpilib.driverstation.Alliance;
 
 class DriveCommandTest {
   @Test
@@ -26,8 +26,18 @@ class DriveCommandTest {
 
   @Test
   void forwardIsInvertedOnlyForBlue() {
-    assertEquals(-1, DriveCommand.forwardForAlliance(1, Alliance.BLUE));
-    assertEquals(1, DriveCommand.forwardForAlliance(1, Alliance.RED));
+    assertEquals(-1, DriveCommand.forwardForAlliance(1, Alliance.Blue));
+    assertEquals(1, DriveCommand.forwardForAlliance(1, Alliance.Red));
+  }
+
+  @Test
+  void neutralStickDriftInsideDeadbandCommandsZero() {
+    var drive = new CapturingDrive();
+    new DriveCommand(drive, new Input(-0.139, 0.003, -0.082)).executeOnce();
+
+    assertEquals(0, drive.x, 1e-9);
+    assertEquals(0, drive.y, 1e-9);
+    assertEquals(0, drive.omega, 1e-9);
   }
 
   private record Input(double forward, double strafe, double rotation) implements DriverController {

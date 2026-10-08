@@ -1,14 +1,14 @@
 package frc.robot.Subsystems.drive.Motor.module;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.AutoLog;
-import org.wpilib.math.geometry.Rotation2d;
 
 public interface ModuleIO {
   @AutoLog
   class ModuleIOInputs {
     public double drivePositionMeters;
     public double driveVelocityMetersPerSec;
-    public Rotation2d turnPosition = Rotation2d.ZERO;
+    public Rotation2d turnPosition = new Rotation2d();
     public double turnVelocityRadPerSec;
     public boolean connected = true;
   }

@@ -1,16 +1,16 @@
 package frc.robot.Subsystems.drive.Motor.module;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import org.littletonrobotics.junction.Logger;
-import org.wpilib.math.geometry.Rotation2d;
-import org.wpilib.math.kinematics.SwerveModulePosition;
-import org.wpilib.math.kinematics.SwerveModuleVelocity;
 
 /** One module in fixed drivetrain order: FL, FR, BL, BR. */
 public final class Module {
   private final String name;
   private final ModuleIO io;
   private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
-  private Rotation2d turnSetpoint = Rotation2d.ZERO;
+  private Rotation2d turnSetpoint = new Rotation2d();
 
   public Module(String name, ModuleIO io) {
     this.name = name;
@@ -23,17 +23,17 @@ public final class Module {
     Logger.recordOutput("Drive/" + name + "/TurnSetpoint", turnSetpoint);
   }
 
-  public SwerveModuleVelocity velocity() {
-    return new SwerveModuleVelocity(inputs.driveVelocityMetersPerSec, inputs.turnPosition);
+  public SwerveModuleState velocity() {
+    return new SwerveModuleState(inputs.driveVelocityMetersPerSec, inputs.turnPosition);
   }
 
   public SwerveModulePosition position() {
     return new SwerveModulePosition(inputs.drivePositionMeters, inputs.turnPosition);
   }
 
-  public void runSetpoint(SwerveModuleVelocity setpoint) {
-    var optimized = setpoint.optimize(inputs.turnPosition);
-    turnSetpoint = optimized.angle;
-    io.setDesired(optimized.velocity, optimized.angle);
+  public void runSetpoint(SwerveModuleState setpoint) {
+    setpoint.optimize(inputs.turnPosition);
+    turnSetpoint = setpoint.angle;
+    io.setDesired(setpoint.speedMetersPerSecond, setpoint.angle);
   }
 }

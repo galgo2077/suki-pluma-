@@ -1,9 +1,9 @@
 package frc.robot.Subsystems.drive.Encoders;
 
-import static org.wpilib.units.Units.Radians;
+import static edu.wpi.first.units.Units.Radians;
 
 import com.ctre.phoenix6.hardware.CANcoder;
-import org.wpilib.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 
 /** TODO HARDWARE: assign FL, FR, and BL CANcoder IDs before real construction. */
 public final class AbsoluteEncoderIOCANcoder implements AbsoluteEncoderIO {

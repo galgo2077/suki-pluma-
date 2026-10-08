@@ -1,10 +1,10 @@
 package frc.robot.Subsystems.Odometry.Gyro;
 
-import static org.wpilib.units.Units.Radians;
-import static org.wpilib.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
-import org.wpilib.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 
 /** TODO HARDWARE: assign the Pigeon CAN ID before real construction. */
 public final class GyroIOPigeon2 implements GyroIO {
