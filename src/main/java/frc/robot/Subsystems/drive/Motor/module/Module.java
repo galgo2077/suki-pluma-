@@ -36,4 +36,8 @@ public final class Module {
     turnSetpoint = setpoint.angle;
     io.setDesired(setpoint.speedMetersPerSecond, setpoint.angle);
   }
+
+  public void stop() {
+    io.stop();
+  }
 }

@@ -10,10 +10,17 @@ public interface ModuleIO {
     public double driveVelocityMetersPerSec;
     public Rotation2d turnPosition = new Rotation2d();
     public double turnVelocityRadPerSec;
-    public boolean connected = true;
+    public Rotation2d absoluteTurnPosition = new Rotation2d();
+    public double driveCurrentAmps;
+    public double turnCurrentAmps;
+    public boolean absoluteEncoderConnected;
+    public boolean fault;
+    public boolean connected;
   }
 
   default void updateInputs(ModuleIOInputs inputs) {}
 
   default void setDesired(double metersPerSec, Rotation2d angle) {}
+
+  default void stop() {}
 }

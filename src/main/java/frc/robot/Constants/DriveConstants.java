@@ -49,4 +49,53 @@ public final class DriveConstants {
     // startup.
     SteeringReferenceMode.MANUAL_ZERO
   };
+
+  /** One physical module in fixed FL, FR, BL, BR order. */
+  public record ModuleHardware(
+      Integer driveCanId,
+      Integer turnCanId,
+      Integer canCoderCanId,
+      Integer throughBoreDio,
+      Boolean driveInverted,
+      Boolean turnInverted,
+      Integer driveCurrentLimitAmps,
+      Integer turnCurrentLimitAmps,
+      Double absoluteOffsetRadians) {}
+
+  // TODO HARDWARE: enter IDs, inversion, current limits, and measured absolute offsets.
+  // FL, FR, and BL use CANcoders; BR uses its Thrifty Through Bore Encoder on DIO.
+  public static final ModuleHardware[] MODULE_HARDWARE = {
+    new ModuleHardware(null, null, null, null, null, null, null, null, null),
+    new ModuleHardware(null, null, null, null, null, null, null, null, null),
+    new ModuleHardware(null, null, null, null, null, null, null, null, null),
+    new ModuleHardware(null, null, null, null, null, null, null, null, null)
+  };
+
+  // TODO HARDWARE: Pigeon CAN ID, mounting, and yaw sign.
+  public static final Integer PIGEON_CAN_ID = null;
+
+  // TODO MEASURE: wheel circumference and both module reductions, expressed as encoder units.
+  public static final double DRIVE_POSITION_METERS_PER_MOTOR_ROTATION = Double.NaN;
+  public static final double DRIVE_VELOCITY_METERS_PER_SECOND_PER_RPM = Double.NaN;
+  public static final double TURN_POSITION_RADIANS_PER_MOTOR_ROTATION = Double.NaN;
+  public static final double TURN_VELOCITY_RADIANS_PER_SECOND_PER_RPM = Double.NaN;
+
+  // TODO TUNE: SPARK MAX drive/turn closed-loop gains.
+  public static final double DRIVE_KP = Double.NaN;
+  public static final double TURN_KP = Double.NaN;
+
+  public static boolean realHardwareConfigurationValid() {
+    if (PIGEON_CAN_ID == null || MODULE_HARDWARE.length != 4) return false;
+    for (int i = 0; i < MODULE_HARDWARE.length; i++) {
+      ModuleHardware module = MODULE_HARDWARE[i];
+      boolean hasExpectedAbsoluteEncoder =
+          i == 3 ? module.throughBoreDio() != null : module.canCoderCanId() != null;
+      if (module.driveCanId() == null
+          || module.turnCanId() == null
+          || !hasExpectedAbsoluteEncoder
+          || module.driveInverted() == null
+          || module.turnInverted() == null) return false;
+    }
+    return true;
+  }
 }
